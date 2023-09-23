@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps with Firebase Coordinates</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkXkt5IliZ4clNGuiHwcDY8OtD-p-DYpM"></script>
+</head>
+<body>
+    <div id="map" style="width: 100%; height: 400px;"></div>
+
+
+
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-app.js"></script>
+    <script src='https://www.gstatic.com/firebasejs/7.5.0/firebase-analytics.js'></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-database.js"></script>
+    
+    <script>
+        // Initialize Firebase with your Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDiI4syMfe23AZkyosq9eohAp5rVpjlC98",
+            authDomain: "drive-protect-1f05c.firebaseapp.com",
+            databaseURL: "https://drive-protect-1f05c-default-rtdb.firebaseio.com",
+            projectId: "drive-protect-1f05c",
+            storageBucket: "drive-protect-1f05c.appspot.com",
+            messagingSenderId: "737141756223",
+            appId: "1:737141756223:web:4022d7b8f0c91293fcc38a",
+            measurementId: "G-DKMSRPB14K"
+        };
+
+        //const app = initializeApp(firebaseConfig);
+        const app = firebase.initializeApp(firebaseConfig);
+        //const analytics =getAnalysis();
+        const analytics = firebase.analytics(app);
+        // Reference to your Firebase database
+        const database = firebase.database();
+
+        // Reference to the "GPS" node
+        const gpsRef = database.ref('GPS');
+
+        // Initialize the map
+        function initMap() {
+            const mapOptions = {
+                center: { lat: 0, lng: 0 }, // Center the map initially at (0, 0)
+                zoom: 5, // Adjust the initial zoom level
+            };
+
+            const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            // Fetch coordinates from Firebase
+            gpsRef.on('value', (snapshot) => {
+                const gpsData = snapshot.val();
+                const lat = gpsData.lat;
+                const lng = gpsData.lng;
+
+                // Create a marker on the map using the fetched coordinates
+                const marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    map: map,
+                    title: "Location Name", // Customize as needed
+                });
+
+                // Center the map on the fetched coordinates
+                map.setCenter({ lat, lng });
+            });
+        }
+
+        // Load the map when the page is fully loaded
+        google.maps.event.addDomListener(window, "load", initMap);
+    </script>
+</body>
+</html> 
